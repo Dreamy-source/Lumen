@@ -1,1 +1,3 @@
 arch/x86/legacy/build
+.vscode
+.gitignore
