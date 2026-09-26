@@ -3,7 +3,9 @@
 
 jmp start
 
-%include "source/drivers/bios/descblock.asm"
+SECTORS_TO_READ32 equ 32
+SECTORS_TO_READ64 equ 128
+
 %include "source/drivers/bios/print.asm"
 
 boot_drive: db 0x00
@@ -14,10 +16,16 @@ start:
     cli
     mov [boot_drive], dl
 
-    mov ah, 0x42   ; BIOS Extended Read Sectors
+    mov ah, 0x42     ; BIOS Extended Read Sectors
     mov dl, [boot_drive]
-    mov si, dap    ; SI=DAP
-    int 0x13       ; BIOS Disk Services
+    mov si, dap32    ; SI=DAP32
+    int 0x13         ; BIOS Disk Services
+    jc  disk_err
+
+    mov ah, 0x42
+    mov dl, [boot_drive]
+    mov si, dap64
+    int 0x13
     jc  disk_err
 
     in  al, 0x92   ; Control Port A
@@ -30,7 +38,7 @@ start:
     or  eax, 1b    ; PE
     mov cr0, eax
 
-    jmp 0x08:KERNEL_ADDRESS
+    jmp 0x08:0x8000
 
 gdt:
     dq 0   ; null descriptor
@@ -68,11 +76,20 @@ disk_err:
     cli
     hlt
 
-dap:
+dap32:
     db 16               ; size of packet
     db 0                ; always zero
-    dw SECTORS_TO_READ  ; sectors
-    dw KERNEL_ADDRESS   ; offset
+    dw SECTORS_TO_READ32; sectors
+    dw 0x8000           ; offset
     dw 0x0000           ; segment
     dq 1                ; LBA (lower 64 bits)
     dq 0                ; LBA (higher 64 bits)
+
+dap64:
+    db 16
+    db 0
+    dw SECTORS_TO_READ64
+    dw 0x0000
+    dw 0x1000
+    dq 128
+    dq 0
