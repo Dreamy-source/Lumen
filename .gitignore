@@ -1,0 +1,4 @@
+arch/x86/legacy/build/
+arch/x86/legacy/build.sh
+.clangd
+.vscode

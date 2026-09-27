@@ -1,4 +1,4 @@
-[org 0x8000]
+[org 0xC000]
 [bits 32]
 
 start:
@@ -9,6 +9,19 @@ start:
     mov gs, ax
     mov ss, ax
     mov esp, 0x90000
+
+    mov edi, 0xB8000
+    mov ax,  0x2000
+    mov cx,  80 * 25
+    rep stosb
+
+    mov edi,       0xB8000
+    mov [edi],     'm'
+    mov [edi + 1], 0x07 
+    mov [edi + 2], '3'
+    mov [edi + 3], 0x07 
+    mov [edi + 4], '2'
+    mov [edi + 5], 0x07 
 
     ; cr3 = pml4
     mov eax, pml4

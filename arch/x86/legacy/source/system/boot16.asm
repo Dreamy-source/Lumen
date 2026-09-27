@@ -3,93 +3,45 @@
 
 jmp start
 
-SECTORS_TO_READ32 equ 32
-SECTORS_TO_READ64 equ 128
+SECTORS_TO_READ16    equ 32
 
 %include "source/drivers/bios/print.asm"
 
+disk_err_msg: db "error: disk error | stage 1", 0x0D, 0x0A, 0
+
 boot_drive: db 0x00
 
-disk_err_msg: db "[error]: disk error", 0x0D, 0x0A, 0
+; lumen memory map:
+; boot 16:     0x7C00
+; boot 32:     0x8000
+; boot 64:     0x10000
 
 start:
-    cli
-    mov [boot_drive], dl
+    mov   [boot_drive], dl
+    mov   sp, 0x7c00
 
-    mov ah, 0x42     ; BIOS Extended Read Sectors
-    mov dl, [boot_drive]
-    mov si, dap32    ; SI=DAP32
-    int 0x13         ; BIOS Disk Services
-    jc  disk_err
+    jmp   lumen_boot2
 
+lumen_boot2:
     mov ah, 0x42
     mov dl, [boot_drive]
-    mov si, dap64
+    mov si, dap16
     int 0x13
     jc  disk_err
 
-    in  al, 0x92   ; Control Port A
-    or  al, 10b    ; A20
-    out 0x92, al
+    jmp 0x0000:0x8000
 
-    lgdt [gdtr]
-
-    mov eax, cr0
-    or  eax, 1b    ; PE
-    mov cr0, eax
-
-    jmp 0x08:0x8000
-
-gdt:
-    dq 0   ; null descriptor
-
-    ; code segment (ring 0)
-    dw 0xFFFF       ; limit 15:0
-    dw 0x000        ; base 15:0
-    db 0x00         ; base 23:16
-    db 10011010b    ; access: P=1, DPL=0, S=1, E=1, RW=1
-    db 11001111b    ; flags: G=1, D=1, Limit 19:16=0xF
-    db 0x00         ; base 31:24
-
-    ; data segment (ring 0)
-    dw 0xFFFF       ; limit 15:0
-    dw 0x0000       ; base 15:0
-    db 0x00         ; base 23:16
-    db 10010010b    ; access: P=1, DPL=0, S=1, E=0, RW=1
-    db 11001111b    ; flags: G=1, D=1, Limit 19:16=0xF
-    db 0x00         ; base 31:24
-
-    ; short version:
-    ; dq 0x0000000000000000   ; null descriptor
-    ; dq 0x00CF9A000000FFFF   ; code segment (ring 0)
-    ; dq 0x00CF92000000FFFF   ; data segment (ring 0)
-
-gdt_end:
-
-gdtr:
-    dw gdt_end - gdt - 1
-    dd gdt
+dap16:
+    db 16               ; size of packet
+    db 0                ; always zero
+    dw SECTORS_TO_READ16; sectors
+    dw 0x8000           ; offset
+    dw 0x0000           ; segment
+    dq 1                ; LBA (lower 64 bits)
+    dq 0                ; LBA (higher 64 bits)
 
 disk_err:
     mov  si, disk_err_msg
     call print
     cli
     hlt
-
-dap32:
-    db 16               ; size of packet
-    db 0                ; always zero
-    dw SECTORS_TO_READ32; sectors
-    dw 0x8000           ; offset
-    dw 0x0000           ; segment
-    dq 1                ; LBA (lower 64 bits)
-    dq 0                ; LBA (higher 64 bits)
-
-dap64:
-    db 16
-    db 0
-    dw SECTORS_TO_READ64
-    dw 0x0000
-    dw 0x1000
-    dq 128
-    dq 0
