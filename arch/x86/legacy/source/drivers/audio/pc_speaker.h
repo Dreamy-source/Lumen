@@ -1,7 +1,8 @@
 #ifndef PC_SPEAKER_H
 #define PC_SPEAKER_H
 
-#include "common/liblumen.h"
+#include "common/types.h"
+#include "common/port.h"
 
 static void play_sound(uint32_t nFrequence) {
 	uint32_t Div;
