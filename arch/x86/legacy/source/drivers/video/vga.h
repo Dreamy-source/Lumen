@@ -1,6 +1,7 @@
 #ifndef VGA_H
 #define VGA_H
 
+#include <stdarg.h>
 #define VGA_MEMORY 0xB8000
 #define VGA_WIDTH  80
 #define VGA_HEIGHT 25
@@ -64,6 +65,95 @@ static inline void print_hex(uint64_t v, int digits, uint8_t color)
     {
         print_sym(hex_digits[(v >> (i * 4)) & 0xF], color);
     }
+}
+
+static inline void print_dec(uint64_t n, uint8_t attr)
+{
+    static const char dec_digits[] = "0123456789";
+
+    if (n == 0)
+    {
+        print_sym('0', attr);
+        return;
+    }
+
+    if (n < 0)
+    {
+        print_sym('-', attr);
+        n = -n;
+    }
+
+    char buf[20];
+    int i = 0;
+
+    while (n > 0)
+    {
+        buf[i++] = dec_digits[n % 10];
+        n /= 10;
+    }
+
+    while (i > 0)
+    {
+        print_sym(buf[--i], attr);
+    }
+}
+
+static inline void kprintf(const char* fmt, uint8_t attr, uint8_t spattr, ...)
+{
+    va_list args;
+    va_start(args, spattr);
+
+    for (const char* p = fmt; *p; p++)
+    {
+        if (*p != '%')
+        {
+            print_sym(*p, attr);
+            continue;
+        }
+
+        p++;
+
+        switch (*p)
+        {
+            case 'h':
+            {
+                unsigned int n = va_arg(args, unsigned int);
+                print_hex(n, 8, spattr);
+                break;
+            }
+            case 'd':
+            {
+                int n = va_arg(args, unsigned int);
+                print_dec(n, spattr);
+                break;
+            }
+            case 's':
+            {
+                const char* s = va_arg(args, const char*);
+                print_str(s, spattr);
+                break;
+            }
+            case 'c':
+            {
+                char c = (char)va_arg(args, int);
+                print_sym(c, spattr);
+                break;
+            }
+            case '%':
+            {
+                print_sym('%', attr);
+                break;
+            }
+            default:
+            {
+                print_sym('%', attr);
+                print_sym(*p, attr);
+                break;
+            }
+        }
+    }
+
+    va_end(args);
 }
 
 static inline void fill(uint8_t sym, uint8_t color)
