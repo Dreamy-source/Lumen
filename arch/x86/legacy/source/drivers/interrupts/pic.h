@@ -2,6 +2,7 @@
 #define PIC_H
 
 #include "common/port.h"
+#include "common/io.h"
 
 static inline void pic_init(uint16_t irq0_8_offset, uint16_t irq8_15_offset)
 {
