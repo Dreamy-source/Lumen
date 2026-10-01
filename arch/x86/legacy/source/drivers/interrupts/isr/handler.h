@@ -39,14 +39,6 @@ static const char* failureDescriptions[32] = {
     "| [???] reserved",
 };
 
-static inline void isr_handler(uint8_t vector)
-{
-    if (vector < 32) {
-        fill(' ', 0x0C);
-        print_str("KERNEL PANIC", 0x0F);
-        print_str(failureDescriptions[vector], 0x0F);
-        for(;;) __asm__ volatile ("hlt");
-    }
-}
+static inline void isr_handler(uint8_t vector);
 
 #endif
