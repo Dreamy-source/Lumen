@@ -31,7 +31,18 @@ static inline void scroll_screen(void)
     fcpos = cpos;
 }
 
-static inline void newline()
+static inline void clear(void)
+{
+    for (int i = 0; i < VGA_SCREEN; i++)
+    {
+        VGA[i * 2] = ' ';
+        VGA[i * 2 + 1] = 0x00;
+    }
+    cpos = 0;
+    fcpos = cpos;
+}
+
+static inline void newline(void)
 {
     cpos += VGA_WIDTH - (cpos % VGA_WIDTH);
     fcpos = cpos;
@@ -168,28 +179,6 @@ static inline void fill(uint8_t sym, uint8_t color)
     fcpos = cpos;
 }
 
-static inline void clear(void)
-{
-    for (int i = 0; i < VGA_SCREEN; i++)
-    {
-        VGA[i * 2] = ' ';
-        VGA[i * 2 + 1] = 0x00;
-    }
-    cpos = 0;
-    fcpos = cpos;
-}
-
-static inline void clear_all(void)
-{
-    for (int i = 0; i < VGA_SCREEN; i++)
-    {
-        VGA[i * 2] = ' ';
-        VGA[i * 2 + 1] = 0x00;
-    }
-    cpos = 0;
-    fcpos = cpos;
-}
-
 static inline void print_cursor(uint8_t sym, uint8_t color)
 {
     VGA[cpos * 2] = sym;
@@ -213,6 +202,28 @@ static inline void cursor_blink()
     sleep(200);
     print_cursor(' ', 0x0F);
     sleep(200);
+}
+
+static inline void scroll_screen_by(uint16_t pos)
+{
+    if (pos == 0 || pos >= VGA_HEIGHT)
+    {
+        clear();
+        return;
+    }
+
+    for (int i = 0; i < VGA_WIDTH * (VGA_HEIGHT - pos); i++)
+    {
+        VGA[i * 2]     = VGA[(i + 80) * 2];
+        VGA[i * 2 + 1] = VGA[(i + 80) * 2 + 1];
+    }
+    for (int i = VGA_WIDTH * (VGA_HEIGHT - pos); i < VGA_SCREEN; i++)
+    {
+        VGA[i * 2] = ' ';
+        VGA[i * 2 + 1] = 0x00;
+    }
+    cpos = VGA_WIDTH * (VGA_HEIGHT - pos);
+    fcpos = cpos;
 }
 
 #endif
