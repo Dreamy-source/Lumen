@@ -1,6 +1,8 @@
 #ifndef IO_H
 #define IO_H
 
+#include "common/port.h"
+
 static inline void io_wait(void)
 {
     outb(0x80, 0);

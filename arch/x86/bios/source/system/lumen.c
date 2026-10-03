@@ -16,7 +16,7 @@ void lumen_main(void)
     
     pit_init(1000);
 
-    __asm__ volatile ("sti");
+    enable_interrupts();
     
     // by default, lumen finds the HDA device on the PCI bus automatically
     hda_locate();
@@ -28,5 +28,6 @@ void lumen_main(void)
     while (1)
     {
         cursor_blink();
+        wait_for_interrupt();
     }
 }

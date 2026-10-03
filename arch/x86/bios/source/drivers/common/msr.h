@@ -1,8 +1,8 @@
 #ifndef MSR_H
 #define MSR_H
 
-#include "port.h"
-#include "types.h"
+#include "common/port.h"
+#include "common/types.h"
 
 static inline void wrmsr(uint64_t msr, uint64_t value)
 {

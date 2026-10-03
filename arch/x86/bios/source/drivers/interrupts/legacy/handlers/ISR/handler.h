@@ -1,8 +1,7 @@
 #ifndef ISR_HANDLER_H
 #define ISR_HANDLER_H
 
-#include "common/types.h"
-#include "video/vga.h"
+#include "common/baselib.h"
 
 static const char* failureDescriptions[32] = {
     "| [#DE] division by zero",
