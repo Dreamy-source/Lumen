@@ -6,14 +6,14 @@ LD      := ld.lld
 OBJCOPY := llvm-objcopy
 DD      := dd
 
-CFLAGS  := --target=x86_64-unknown-none \
-           -ffreestanding -fno-pic -fno-pie \
-           -mno-red-zone -mcmodel=small \
-           -Wall -Wextra -O2 -Isource/drivers
+CFLAGS := --target=x86_64-unknown-none \
+          -ffreestanding -fno-pic -fno-pie \
+          -mno-red-zone -mcmodel=small \
+          -Wall -Wextra -O2 -I. -Idrivers -Ilib/
 
 LDFLAGS := --image-base 0x20000 -Ttext 0x20000
 
-BUILD_DIR := build
+BUILD_DIR := ../../../build/x86/bios
 BIN_DIR   := $(BUILD_DIR)/bin
 OBJ_DIR   := $(BUILD_DIR)/obj
 ELF_DIR   := $(BUILD_DIR)/elf
@@ -34,25 +34,25 @@ build: $(IMG)
 	@echo "[lumenmake] build complete: $(IMG)"
 	@ls -lh $(IMG)
 
-$(BOOT16_1_BIN): source/system/boot16-1.asm
+$(BOOT16_1_BIN): system/lumenboot/boot16-1.asm
 	@mkdir -p $(BIN_DIR)
 	$(NASM) -f bin $< -o $@
 	truncate -s 510 $@
 	printf '\x55\xAA' >> $@
 
-$(BOOT16_2_BIN): source/system/boot16-2.asm
+$(BOOT16_2_BIN): system/lumenboot/boot16-2.asm
 	@mkdir -p $(BIN_DIR)
 	$(NASM) -f bin $< -o $@
 
-$(BOOT32_BIN): source/system/boot32.asm
+$(BOOT32_BIN): system/lumenboot/boot32.asm
 	@mkdir -p $(BIN_DIR)
 	$(NASM) -f bin $< -o $@
 
-$(BOOT64_OBJ): source/system/boot64.asm
+$(BOOT64_OBJ): system/lumenboot/boot64.asm
 	@mkdir -p $(OBJ_DIR)
 	$(NASM) -f elf64 $< -o $@
 
-$(LUMEN_OBJ): source/system/lumen.c
+$(LUMEN_OBJ): system/lumen.c
 	@mkdir -p $(OBJ_DIR)
 	$(CLANG) $(CFLAGS) -c $< -o $@
 
@@ -67,7 +67,7 @@ $(BOOT64_BIN): $(BOOT64_ELF)
 $(IMG): $(BOOT16_1_BIN) $(BOOT16_2_BIN) $(BOOT32_BIN) $(BOOT64_BIN)
 	@mkdir -p $(IMG_DIR)
 	$(DD) if=/dev/zero of=$@ bs=512 count=2880
-	$(DD) if=$(BOOT16_1_BIN)   of=$@ bs=512 seek=0   conv=notrunc
+	$(DD) if=$(BOOT16_1_BIN) of=$@ bs=512 seek=0   conv=notrunc
 	$(DD) if=$(BOOT16_2_BIN) of=$@ bs=512 seek=1   conv=notrunc
 	$(DD) if=$(BOOT32_BIN)   of=$@ bs=512 seek=4   conv=notrunc
 	$(DD) if=$(BOOT64_BIN)   of=$@ bs=512 seek=128 conv=notrunc

@@ -1,6 +1,5 @@
 clear
 
-
 gcc system/boot.c                      \
         -c                             \
         -fno-stack-protector           \
