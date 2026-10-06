@@ -3,9 +3,9 @@
 
 Supported architectures:
 - x86
-- ARM    (will be in the feature)
-- RISC-V (will be in the feature)
-- VN     (will be in the feature)
+- ARM    (will be in the future)
+- RISC-V (will be in the future)
+- VN     (will be in the future)
 
 x86:
 - UEFI
