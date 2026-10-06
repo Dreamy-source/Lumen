@@ -111,4 +111,9 @@ run-default: build
 		-audiodev pa,id=snd0 \
 		-device intel-hda \
 		-device hda-duplex,audiodev=snd0 \
-		-m 4G
+		-m 4G \
+		-machine q35 \
+		-object memory-backend-ram,id=mem0,size=2G \
+		-numa node,nodeid=0,memdev=mem0 \
+		-object memory-backend-ram,id=mem1,size=2G \
+		-numa node,nodeid=1,memdev=mem1

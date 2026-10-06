@@ -2,8 +2,8 @@
 #define IDT_INIT_H
 
 #include "default/types.h"
-#include "interrupts/legacy/idt/idt-set-descriptor.h"
-#include "interrupts/legacy/idt/idt-handlers.h"
+#include "interrupts/idt/idt-set-descriptor.h"
+#include "interrupts/idt/idt-handlers.h"
 
 static inline void idt_init(void)
 {

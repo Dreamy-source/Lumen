@@ -11,6 +11,8 @@
 
 #include "interrupts/legacy/handlers/IRQ0/irq0-sleep.h"
 
+#include "interrupts/lapic/timer/lapic-timer-wait.h"
+
 #include "video/legacy/ascii/cp437.h"
 
 static int cpos = 0;
@@ -200,9 +202,9 @@ static inline void print_shellrequest()
 static inline void cursor_blink()
 {
     print_cursor('_', 0x0F);
-    sleep(200);
+    lapic_timer_wait_ms(200);
     print_cursor(' ', 0x0F);
-    sleep(200);
+    lapic_timer_wait_ms(200);
 }
 
 static inline void scroll_screen_by(uint16_t pos)

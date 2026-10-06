@@ -5,6 +5,7 @@
 
 extern void irq0_handler_asm(void);
 extern void irq1_handler_asm(void);
+extern void lapic_timer_handler_asm(void);
 
 static __attribute__((noinline)) void stub_handler(void)
 {

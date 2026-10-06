@@ -12,6 +12,8 @@
 #include "cpu/cpuid/cpuid-vendor.h"
 #include "cpu/cpuid/cpuid-features.h"
 #include "cpu/cpuid/cpuid-features-structinfo.h"
+#include "cpu/tsc/tsc-rdtsc.h"
+#include "cpu/tsc/tsc-supported.h"
 
 // string
 #include "string/string-streq.h"
@@ -43,24 +45,35 @@
     #include "interrupts/legacy/pic/pic-mask.h"
     
     // idt
-    #include "interrupts/legacy/idt/idt-init.h"
-    #include "interrupts/legacy/idt/idt-set-descriptor.h"
-    #include "interrupts/legacy/idt/idt-handlers.h"
-    #include "interrupts/legacy/idt/idt-interrupts.h"
-    #include "interrupts/legacy/idt/idt-structinfo.h"
+    #include "interrupts/idt/idt-init.h"
+    #include "interrupts/idt/idt-set-descriptor.h"
+    #include "interrupts/idt/idt-handlers.h"
+    #include "interrupts/idt/idt-interrupts.h"
+    #include "interrupts/idt/idt-structinfo.h"
 
-#include "interrupts/legacy/handlers/ISR/handler.h"
+    // isr
+    #include "interrupts/legacy/handlers/ISR/handler.h"
 
-// irq0
-#include "interrupts/legacy/handlers/IRQ0/irq0-handler.h"
-#include "interrupts/legacy/handlers/IRQ0/irq0-init.h"
-#include "interrupts/legacy/handlers/IRQ0/irq0-sleep.h"
+    // irq0
+    #include "interrupts/legacy/handlers/IRQ0/irq0-handler.h"
+    #include "interrupts/legacy/handlers/IRQ0/irq0-init.h"
+    #include "interrupts/legacy/handlers/IRQ0/irq0-sleep.h"
 
-// irq1
-#include "interrupts/legacy/handlers/IRQ1/irq1-handler.h"
-#include "interrupts/legacy/handlers/IRQ1/irq1-handlecmd.h"
-#include "interrupts/legacy/handlers/IRQ1/irq1-buffer.h"
-#include "interrupts/legacy/handlers/IRQ1/irq1-translate-tables.h"
+    // irq1
+    #include "interrupts/legacy/handlers/IRQ1/irq1-handler.h"
+    #include "interrupts/legacy/handlers/IRQ1/irq1-handlecmd.h"
+    #include "interrupts/legacy/handlers/IRQ1/irq1-buffer.h"
+    #include "interrupts/legacy/handlers/IRQ1/irq1-translate-tables.h"
+
+    // lapic
+    #include "interrupts/lapic/lapic-init.h"
+    #include "interrupts/lapic/lapic-enable.h"
+    #include "interrupts/lapic/lapic-tpr.h"
+    #include "interrupts/lapic/lapic-eoi.h"
+    #include "interrupts/lapic/lapic-svr.h"
+    #include "interrupts/lapic/lapic-esr.h"
+    #include "interrupts/lapic/timer/lapic-timer-init.h"
+    #include "interrupts/lapic/timer/lapic-timer-handler.h"
 
 // audio
     // hda (high definition audio)
@@ -78,8 +91,15 @@
     #include "audio/pcspk/pcspk.h"
 
 // acpi
+#include "drivers/acpi/acpi-header.h"
+#include "drivers/acpi/acpi-locate-all_t.h"
+#include "drivers/acpi/acpi-locate-t.h"
+
     // rsdp
     #include "drivers/acpi/rsdp/acpi-rsdp-locate.h"
     #include "drivers/acpi/rsdp/acpi-rsdp-structinfo.h"
+
+    // madt
+    #include "drivers/acpi/madt/acpi-madt-structinfo.h"
 
 #endif

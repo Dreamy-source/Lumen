@@ -6,9 +6,11 @@ global _start
 
 extern irq0_handler_c
 extern irq1_handler_c
+extern lapic_timer_handler_c
 
 global irq0_handler_asm
 global irq1_handler_asm
+global lapic_timer_handler_asm
 
 _start:
     mov ax, 0x10
@@ -86,6 +88,43 @@ irq1_handler_asm:
     push r15
 
     call irq1_handler_c
+
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop r11
+    pop r10
+    pop r9
+    pop r8
+    pop rbp
+    pop rdi
+    pop rsi
+    pop rdx
+    pop rcx
+    pop rbx
+    pop rax
+
+    iretq
+
+lapic_timer_handler_asm:
+    push rax
+    push rbx
+    push rcx
+    push rdx
+    push rsi
+    push rdi
+    push rbp
+    push r8
+    push r9
+    push r10
+    push r11
+    push r12
+    push r13
+    push r14
+    push r15
+
+    call lapic_timer_handler_c
 
     pop r15
     pop r14

@@ -10,9 +10,9 @@ gcc system/boot.c                      \
         -I/usr/include/efi/x86_64      \
         -I/usr/include/efi/protocol    \
         -DEFI_FUNCTION_WRAPPER         \
-        -o build/obj/boot.o
+        -o ../../../build/x86/uefi/obj/boot.o
 
-ld build/obj/boot.o                    \
+ld ../../../build/x86/uefi/obj/boot.o  \
         /usr/lib/crt0-efi-x86_64.o     \
         -nostdlib                      \
         -znocombreloc                  \
@@ -22,7 +22,7 @@ ld build/obj/boot.o                    \
         -L /usr/lib                    \
         -l:libgnuefi.a                 \
         -l:libefi.a                    \
-        -o build/so/boot.so
+        -o ../../../build/x86/uefi/so/boot.so
 
 objcopy -j .text                       \
         -j .sdata                      \
@@ -34,11 +34,11 @@ objcopy -j .text                       \
         -j .rela                       \
         -j .reloc                      \
         --output-target=efi-app-x86_64 \
-        build/so/boot.so               \
-        build/efi/boot.efi
+        ../../../build/x86/uefi/so/boot.so      \
+        ../../../build/x86/uefi/efi/boot.efi
 
 
-cp build/efi/boot.efi lumenboot/EFI/BOOT/BOOTX64.EFI
+cp ../../../build/x86/uefi/efi/boot.efi lumenboot/EFI/BOOT/BOOTX64.EFI
 
 qemu-system-x86_64                                                                   \
     -drive if=pflash,format=raw,readonly=on,file=/home/dreamy/OVMF_CODE.fd           \

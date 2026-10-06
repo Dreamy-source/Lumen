@@ -27,9 +27,9 @@ static inline void stop_sound()
 
 static inline void play_note(uint32_t freq, uint32_t duration_ms) {
     play_sound(freq);
-    sleep(duration_ms);
+    pit_sleep(duration_ms);
     stop_sound();
-    sleep(20);
+    pit_sleep(20);
 }
 
 #define NOTE_C4  262

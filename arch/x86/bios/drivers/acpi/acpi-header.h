@@ -15,7 +15,7 @@ typedef struct __attribute__((packed)) {
     uint32_t CreatorRevision;
 } acpi_header_t;
 
-typedef struct {
+typedef struct __attribute__((packed)) {
     acpi_header_t header;
     uint32_t      entries[];
 } acpi_rsdt_t;

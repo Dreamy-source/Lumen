@@ -2,7 +2,7 @@
 #define IDT_SET_DESCRIPTOR_H
 
 #include "lib/baselib.h"
-#include "interrupts/legacy/idt/idt-structinfo.h"
+#include "interrupts/idt/idt-structinfo.h"
 
 static inline void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags)
 {

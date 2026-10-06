@@ -4,10 +4,10 @@
 #include "lib/baselib.h"
 #include "interrupts/legacy/pic/pic-send-eoi.h"
 
-static volatile uint64_t timer_ticks = 0;
+static volatile uint64_t pit_timer_ticks = 0;
 void irq0_handler_c(void)
 {
-    timer_ticks++;
+    pit_timer_ticks++;
     pic_send_eoi(0);
 }
 
